@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Yunjung Jeong</title>
+  <meta name="description" content="Yunjung Jeong — B.S. candidate at DGIST. Passive RF sensing, radar signal processing, physics-based drone sensing simulation in NVIDIA Sionna RT, and ISAC." />
+  <meta name="color-scheme" content="light dark" />
+
+  <meta property="og:type" content="profile" />
+  <meta property="og:title" content="Yunjung Jeong" />
+  <meta property="og:description" content="B.S. candidate at DGIST. Passive radar sensing, radar signal processing, physics-based drone sensing simulation, ISAC." />
+
+  <script>
+    // Runs before first paint so the page never flashes the wrong ground.
+    (function () {
+      var el = document.documentElement;
+      el.className += ' js';
+      var saved = null;
+      try { saved = localStorage.getItem('cv-theme'); } catch (e) { /* private mode */ }
+      if (saved !== 'dark' && saved !== 'light') saved = null;
+      var dark = saved
+        ? saved === 'dark'
+        : !!(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      el.setAttribute('data-theme', dark ? 'dark' : 'light');
+    })();
+  </script>
+
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- Loaded non-render-blocking on purpose. A dropped connection to the font
+       host (sinkhole, captive portal, regional block) must not be able to hold
+       first paint hostage; the fallback stack is perfectly serviceable. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" media="print" onload="this.media='all';this.onload=null"
+        href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400..600;1,400..500&family=Martian+Mono:wdth,wght@75..112.5,400..500&display=swap" />
+  <noscript>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400..600;1,400..500&family=Martian+Mono:wdth,wght@75..112.5,400..500&display=swap" />
+  </noscript>
+</head>
+
+<body>
+  <a class="skip-link" href="#content">Skip to content</a>
+
+  <!-- Running head — the wayfinding device below the two-column breakpoint. -->
+  <div class="runhead" id="runhead">
+    <button type="button" class="runhead-current" id="runheadToggle"
+            aria-expanded="false" aria-controls="runheadPanel">
+      <span class="runhead-num" id="runheadNum" aria-hidden="true">01</span>
+      <span class="runhead-label" id="runheadLabel">Research</span>
+      <span class="runhead-caret" aria-hidden="true"></span>
+    </button>
+    <a class="runhead-top" href="#top">&uarr;&nbsp;Top</a>
+  </div>
+
+  <nav class="runhead-panel toc" id="runheadPanel" aria-label="Contents" hidden>
+    <ol>
+      <li><a href="#research"><span class="toc-label">Research</span><span class="leader" aria-hidden="true"></span></a></li>
+      <li><a href="#publications"><span class="toc-label">Publications</span><span class="leader" aria-hidden="true"></span></a></li>
+      <li><a href="#experience"><span class="toc-label">Experience</span><span class="leader" aria-hidden="true"></span></a></li>
+      <li><a href="#education"><span class="toc-label">Education</span><span class="leader" aria-hidden="true"></span></a></li>
+      <li><a href="#projects"><span class="toc-label">Projects</span><span class="leader" aria-hidden="true"></span></a></li>
+      <li><a href="#skills"><span class="toc-label">Skills</span><span class="leader" aria-hidden="true"></span></a></li>
+    </ol>
+  </nav>
+
+  <div class="page">
+
+    <!-- ================= RAIL — the offprint's cover and spine ================= -->
+    <aside class="rail" id="rail" aria-label="Profile">
+
+      <div class="plate">
+        <button type="button" class="mount mount-btn" id="portraitBtn"
+                aria-label="Enlarge the portrait">
+          <img src="profile.jpg" alt="Portrait of Yunjung Jeong" id="portraitImg" />
+        </button>
+      </div>
+
+      <div class="masthead">
+        <h1>Yunjung Jeong<span class="han" lang="ko">정윤중</span></h1>
+        <p class="role">B.S. Candidate &middot; EE &amp; CS</p>
+        <p class="role">Intelligent Radio Sensing Lab</p>
+      </div>
+
+      <div class="rail-block">
+        <dl class="contact">
+          <dt>Email</dt>
+          <dd><a href="mailto:ak0147@dgist.ac.kr" id="emailLink"
+                 title="Click to copy the address">ak0147@dgist.ac.kr</a></dd>
+          <dt>GitHub</dt>
+          <dd><a href="https://github.com/yunjung-jeong" target="_blank" rel="noopener">yunjung-jeong</a></dd>
+          <dt>CV</dt>
+          <dd><button type="button" class="linklike" id="downloadPdf">Print / save as PDF</button></dd>
+        </dl>
+      </div>
+
+      <nav class="rail-block toc" id="toc" aria-label="Contents">
+        <p class="rail-label">Contents</p>
+        <ol>
+          <li><a href="#research"><span class="toc-label">Research</span><span class="leader" aria-hidden="true"></span></a></li>
+          <li><a href="#publications"><span class="toc-label">Publications</span><span class="leader" aria-hidden="true"></span></a></li>
+          <li><a href="#experience"><span class="toc-label">Experience</span><span class="leader" aria-hidden="true"></span></a></li>
+          <li><a href="#education"><span class="toc-label">Education</span><span class="leader" aria-hidden="true"></span></a></li>
+          <li><a href="#projects"><span class="toc-label">Projects</span><span class="leader" aria-hidden="true"></span></a></li>
+          <li><a href="#skills"><span class="toc-label">Skills</span><span class="leader" aria-hidden="true"></span></a></li>
+        </ol>
+      </nav>
+
+      <div class="colophon">
+        <p>DGIST &middot; Daegu &middot; Republic&nbsp;of&nbsp;Korea</p>
+        <p class="colophon-foot">
+          <span>Last revised August 2026</span>
+          <button type="button" class="icon-btn" id="themeToggle"
+                  aria-pressed="false" aria-label="Switch to the dark theme">
+            <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                 stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="4.2" />
+              <path d="M12 2.4v2.2M12 19.4v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.4 12h2.2M19.4 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6" />
+            </svg>
+            <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                 stroke-linejoin="round" aria-hidden="true">
+              <path d="M20.5 14.6A8.6 8.6 0 0 1 9.4 3.5a8.6 8.6 0 1 0 11.1 11.1z" />
+            </svg>
+          </button>
+        </p>
+      </div>
+
+    </aside>
+
+    <!-- ================= CONTENT — the article ================= -->
+    <main class="content" id="content" tabindex="-1">
+
+      <div id="top" class="opening">
+        <div class="grid-row">
+          <p class="lede">
+            I am a B.S. candidate at
+            <a href="https://www.dgist.ac.kr/" target="_blank" rel="noopener">DGIST</a>,
+            double-majoring in Electrical Engineering and Computer Science, and an
+            undergraduate researcher at the Intelligent Radio Sensing Lab (IRS&nbsp;Lab) under
+            Prof.&nbsp;Jae&#8209;Ho&nbsp;Choi. I work on signals that were designed to carry
+            information but can also be read as measurements of the physical world — passive
+            Wi-Fi sensing on software-defined radio, and physics-based drone sensing simulation
+            in NVIDIA Sionna&nbsp;RT.
+          </p>
+        </div>
+      </div>
+
+      <!-- 01 -->
+      <section class="section" id="research">
+        <h2><span>Research</span></h2>
+
+        <div class="grid-row standfirst">
+          <p class="margin-label">Currently</p>
+          <p class="standfirst-text">
+            Exploring physics-based <b>drone sensing simulation</b> in
+            <b>NVIDIA Sionna&nbsp;RT</b>.
+          </p>
+        </div>
+
+        <div class="grid-row">
+          <p class="margin-label">Statement</p>
+          <div>
+            <p class="para">
+              At IRS&nbsp;Lab that interest takes the form of <em>passive radar sensing</em>:
+              using ambient communication signals as illuminators of opportunity, rather than a
+              dedicated radar transmitter, to detect and characterize moving targets.
+            </p>
+            <p class="para">
+              So far that has meant passive experiments with ambient Wi-Fi on a
+              <span class="mono">USRP-2921</span> — recovering and analyzing respiration
+              waveforms from the measured signal — and, now, physics-based drone sensing
+              simulation in Sionna&nbsp;RT.
+            </p>
+          </div>
+        </div>
+
+        <ul class="topics">
+          <li>
+            <span class="topic-tag">RF sensing</span>
+            <span class="topic-body"><b>RF &amp; passive sensing</b> — passive Wi-Fi sensing,
+            SDR-based measurement, contactless vital-sign monitoring and drone sensing.</span>
+          </li>
+          <li>
+            <span class="topic-tag">Radar DSP</span>
+            <span class="topic-body"><b>Radar &amp; wireless signal processing</b> —
+            cross-ambiguity processing and the Range&ndash;Doppler maps it produces,
+            clutter mitigation.</span>
+          </li>
+          <li>
+            <span class="topic-tag">Physics · ISAC</span>
+            <span class="topic-body"><b>Physics-based sensing &amp; ISAC</b> — RF propagation
+            simulation and physics-based sensing using communication signals.</span>
+          </li>
+          <li>
+            <span class="topic-tag">Learning</span>
+            <span class="topic-body"><b>Learning-based RF sensing</b> — interested in applying
+            machine learning to detection and classification from radar representations.</span>
+          </li>
+        </ul>
+      </section>
+
+      <!-- 02 -->
+      <section class="section" id="publications">
+        <h2><span>Publications &amp; Awards</span></h2>
+
+        <h3 class="group-head">Conference</h3>
+
+        <article class="entry entry-pub">
+          <div class="entry-meta">
+            <span class="cite-num">[1]</span>
+            <a class="plate plate-sm" href="papers/jcci2025_c_v2x_empirical_study.pdf"
+               data-pdf="papers/jcci2025_c_v2x_empirical_study.pdf"
+               aria-label="Open a preview of the JCCI 2025 paper">
+              <span class="mount">
+                <img src="papers/jcci2025_c_v2x_empirical_study.pdf.png"
+                     alt="First page of the JCCI 2025 paper" />
+              </span>
+            </a>
+          </div>
+          <div class="entry-body">
+            <h4 class="sr-only">Real-Time Video Transmission in 5G C-V2X Sidelink: An Empirical Study</h4>
+            <p class="cite">
+              D.&nbsp;Lee, M.&nbsp;Kim, <strong>Y.&nbsp;Jeong</strong>, Y.&nbsp;Jang,
+              Y.&nbsp;Kang, T.&nbsp;Lee, and J.-W.&nbsp;Choi,
+              “Real-Time Video Transmission in 5G C-V2X Sidelink: An Empirical Study
+              <span class="ko" lang="ko">(5G C-V2X Sidelink 기반 실시간 영상 전송 성능에 대한 실증 연구)</span>.”
+              <em>JCCI</em>, 2025.
+            </p>
+            <p class="pub-actions">
+              <a href="papers/jcci2025_c_v2x_empirical_study.pdf" download
+                 aria-label="Download the JCCI 2025 paper as PDF">Download PDF</a>
+            </p>
+          </div>
+        </article>
+
+        <h3 class="group-head" id="awards">Awards</h3>
+
+        <article class="entry">
+          <p class="entry-meta"><span>Jul 2026</span></p>
+          <div class="entry-body">
+            <h4 class="entry-title">Kiturami Scholarship <span class="ko" lang="ko">(귀뚜라미 장학금)</span></h4>
+            <p class="entry-org">Kiturami Cultural Foundation</p>
+            <ul class="entry-notes">
+              <li>One of 50 DGIST recipients, selected by the Student Scholarship Committee
+                through a comprehensive evaluation of undergraduate research-project
+                participants.</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="entry">
+          <p class="entry-meta"><span>Feb 2025</span></p>
+          <div class="entry-body">
+            <h4 class="entry-title">Encouragement Award <span class="ko" lang="ko">(장려상)</span></h4>
+            <p class="entry-org">
+              Winter Conference Idea Contest, Korean Institute of Communications
+              and Information Sciences (KICS)
+            </p>
+          </div>
+        </article>
+      </section>
+
+      <!-- 03 -->
+      <section class="section" id="experience">
+        <h2><span>Experience</span></h2>
+
+        <h3 class="group-head">Research</h3>
+
+        <article class="entry">
+          <p class="entry-meta"><span>Jan 2026</span><span class="to is-present">Present</span></p>
+          <div class="entry-body">
+            <h4 class="entry-title">Undergraduate Researcher</h4>
+            <p class="entry-org">
+              Intelligent Radio Sensing Lab (IRS Lab), DGIST
+              <span class="sep">&middot;</span> Advisor: Prof. Jae&#8209;Ho&nbsp;Choi
+            </p>
+            <ul class="entry-notes">
+              <li><b>Passive Wi-Fi sensing.</b> Implemented a passive sensing pipeline on a
+                <span class="mono">USRP-2921</span> with reference and surveillance channels
+                and CAF-based Range–Doppler processing; recovered and analyzed respiration
+                waveforms from measured Wi-Fi signals.</li>
+              <li><b>Physics-based drone sensing.</b> Currently investigating physics-based RF
+                sensing for drone targets using <span class="mono">NVIDIA Sionna RT</span>.</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="entry">
+          <p class="entry-meta"><span>Jan 2025</span><span class="to">Apr 2025</span></p>
+          <div class="entry-body">
+            <h4 class="entry-title">Undergraduate Researcher</h4>
+            <p class="entry-org">
+              Communication &amp; Signal Processing Lab (CSP Lab), DGIST
+              <span class="sep">&middot;</span> Advisor: Prof. Ji&#8209;Woong&nbsp;Choi
+            </p>
+            <ul class="entry-notes">
+              <li><b>C-V2X sidelink measurement.</b> Empirical study of real-time video
+                transmission over 5G C-V2X sidelink in a V2I scenario with OBU and RSU
+                hardware, characterizing the link by RSSI, estimated SNR, block error rate
+                (BLER) and throughput.</li>
+              <li><b>MCS trade-off analysis.</b> Quantified BLER against average throughput
+                across MCS indices, reported in the JCCI 2025 paper.</li>
+            </ul>
+          </div>
+        </article>
+
+        <h3 class="group-head" id="teaching">Teaching</h3>
+
+        <article class="entry">
+          <p class="entry-meta"><span>Aug 2026</span><span class="to is-present">Present</span></p>
+          <div class="entry-body">
+            <h4 class="entry-title">Teaching Assistant</h4>
+            <p class="entry-org">Introduction to Artificial Intelligence, DGIST</p>
+          </div>
+        </article>
+
+        <article class="entry">
+          <p class="entry-meta"><span>Feb 2026</span><span class="to">Jun 2026</span></p>
+          <div class="entry-body">
+            <h4 class="entry-title">Teaching Assistant</h4>
+            <p class="entry-org">Linear Algebra, DGIST</p>
+          </div>
+        </article>
+      </section>
+
+      <!-- 04 -->
+      <section class="section" id="education">
+        <h2><span>Education</span></h2>
+
+        <article class="entry">
+          <p class="entry-meta"><span>Feb 2021</span><span class="to is-present">Present</span></p>
+          <div class="entry-body">
+            <h3 class="entry-title">B.S. Candidate, Electrical Engineering &amp; Computer Science</h3>
+            <p class="entry-org">
+              Daegu Gyeongbuk Institute of Science &amp; Technology (DGIST)
+              <span class="sep">&middot;</span> School of Undergraduate Studies
+            </p>
+            <ul class="entry-notes">
+              <li>Double major. Expected graduation Aug&nbsp;2027.</li>
+              <li>GPA 3.78&nbsp;/&nbsp;4.30.</li>
+            </ul>
+          </div>
+        </article>
+
+        <h3 class="group-head" id="service">Military Service</h3>
+
+        <article class="entry">
+          <p class="entry-meta"><span>Jul 2022</span><span class="to">Jan 2024</span></p>
+          <div class="entry-body">
+            <h4 class="entry-title">Mandatory Military Service</h4>
+            <p class="entry-org">Republic of Korea Army <span class="sep">&middot;</span> Completed</p>
+          </div>
+        </article>
+      </section>
+
+      <!-- 05 -->
+      <section class="section" id="projects">
+        <h2><span>Projects</span></h2>
+
+        <article class="entry">
+          <p class="entry-meta"><span class="mono-tag">USRP-2921</span><span class="mono-tag">Python</span><span class="mono-tag">RF sensing</span></p>
+          <div class="entry-body">
+            <h3 class="entry-title">Passive Wi-Fi Respiration Sensing</h3>
+            <p class="para small">
+              Built a passive Wi-Fi sensing setup with reference and surveillance channels,
+              using ambient Wi-Fi as the illuminator. Applied CAF-based Range–Doppler and
+              phase-based processing to the measured signals to recover and analyze
+              respiration waveforms.
+            </p>
+          </div>
+        </article>
+
+        <article class="entry">
+          <p class="entry-meta"><span class="mono-tag">C</span><span class="mono-tag">TCP/IP</span><span class="rank">2nd of 40</span></p>
+          <div class="entry-body">
+            <h3 class="entry-title">Network AI Game Client with RGB LED Matrix</h3>
+            <p class="para small">
+              A TCP/IP socket game client in C, using minimax with alpha-beta pruning for
+              real-time decisions and rendering to a 64×64 RGB LED matrix. Placed second
+              of forty teams in the course competition.
+            </p>
+          </div>
+        </article>
+      </section>
+
+      <!-- 06 -->
+      <section class="section" id="skills">
+        <h2><span>Skills</span></h2>
+
+        <dl class="skills">
+          <dt>Wireless &amp; RF</dt>
+          <dd>Passive radar sensing, SDR-based RF measurements, drone-sensing simulation,
+            C-V2X sidelink analysis.</dd>
+
+          <dt>Signal processing</dt>
+          <dd>Cross-ambiguity processing and Range&ndash;Doppler mapping, phase-based
+            sensing, clutter and background removal, FFT&nbsp;/&nbsp;STFT.</dd>
+
+          <dt>Instruments</dt>
+          <dd>Software-defined radio — <span class="mono">USRP X410</span>,
+            <span class="mono">USRP-2921</span>.</dd>
+
+          <dt>Simulation</dt>
+          <dd><span class="mono">NVIDIA Sionna RT</span> — RF propagation and sensing
+            simulation.</dd>
+
+          <dt>Programming</dt>
+          <dd>Python, C/C++, Git, Linux.</dd>
+        </dl>
+      </section>
+
+      <footer class="imprint">
+        <div>
+          <p>Yunjung Jeong &middot; Curriculum Vitae</p>
+          <p>Last revised August 2026 &middot;
+            <a href="https://github.com/yunjung-jeong/cv" target="_blank" rel="noopener">Source on GitHub</a></p>
+        </div>
+      </footer>
+
+    </main>
+  </div>
+
+  <div id="lightbox" class="lightbox" hidden role="dialog" aria-modal="true"
+       aria-label="Enlarged portrait">
+    <div class="lightbox-inner">
+      <img id="lightboxImg" alt="Portrait of Yunjung Jeong, enlarged" />
+      <button type="button" id="lightboxClose" class="overlay-close"
+              aria-label="Close the portrait">&times;</button>
+    </div>
+  </div>
+
+  <div id="pdfLightbox" class="pdf-lightbox" hidden role="dialog" aria-modal="true"
+       aria-label="Paper preview">
+    <div class="pdf-lightbox-inner">
+      <div class="pdf-toolbar">
+        <a id="pdfDownload" href="#" download
+           aria-label="Download the JCCI 2025 paper as PDF">Download PDF</a>
+        <button type="button" id="pdfClose" aria-label="Close the preview">&times;</button>
+      </div>
+      <iframe id="pdfFrame" title="PDF preview"></iframe>
+    </div>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
