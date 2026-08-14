@@ -1,0 +1,1083 @@
+/* =============================================================================
+   Offprint — a personal CV set as a journal offprint.
+   Two typefaces in opposed roles: Alegreya carries human language,
+   Martian Mono carries machine language (dates, numerals, labels).
+   Hierarchy is carried by size, weight and rule weight. No cards, no shadows,
+   no fills, no radius above 2px.
+   ============================================================================= */
+
+:root {
+  color-scheme: light dark;
+
+  /* Two-colour press run on warm uncoated stock. */
+  --bg:           #FBFAF6;
+  --bg-lift:      #F2EFE7;
+  --ink:          #191714;
+  --ink-soft:     #37342E;
+  --ink-muted:    #6E6A61;
+  --line:         #E4E0D5;
+  --line-strong:  #C6C0AF;
+  --accent:       #0E5F55;
+  --select-bg:    #D3E7E3;
+  --shadow-modal: rgba(25, 23, 20, .42);
+
+  --serif: 'Alegreya', 'Iowan Old Style', Georgia,
+           'AppleMyungjo', 'Nanum Myeongjo', 'Noto Serif KR', serif;
+  --mono:  'Martian Mono', ui-monospace, SFMono-Regular, 'SF Mono', Menlo,
+           Consolas, monospace;
+
+  /* Martian Mono runs wider than most monos and the marginal column is a fixed
+     track, so the labels are set on its width axis rather than by cutting the
+     tracking. Inherited from the root because every mono rule wants it; inert
+     on the serif, which carries no wdth axis and is never width-synthesised.
+     82.5% is measured, not chosen: it is the widest setting at which no rail
+     label wraps that did not already wrap before the typeface changed. */
+  font-stretch: 82.5%;
+
+  /* Grid — fluid and left-bound. The assembly grows with the viewport; the
+     prose measure is capped separately so readability never scales with it. */
+  --rail-w:      clamp(16rem, 20vw, 22rem);
+  --gutter:      clamp(2.25rem, 3.6vw, 4.5rem);
+  --content-max: 60rem;
+  --page-pad:    clamp(1.25rem, 2.4vw, 3.25rem);
+  --margin-col:  clamp(8rem, 9vw, 12rem);
+  --margin-gap:  clamp(1.5rem, 2.1vw, 2.75rem);
+  /* Re-measured on the swap to Alegreya, which sets a shade narrower than the
+     face this replaced: 32.75rem reproduces the line length the page already
+     had. Character counts quoted for a measure depend on the sample text, so
+     the anchor here is the rendered width, not a character number. */
+  --measure:     32.75rem;
+
+  /* Vertical rhythm — a ~1.6 progression, deliberately not the 4/8/12/16 ramp. */
+  --s1: .25rem;  --s2: .5rem;   --s3: .75rem;  --s4: 1.125rem;
+  --s5: 1.75rem; --s6: 2.75rem; --s7: 4.25rem; --s8: 6.5rem;
+}
+
+/* The same press run, on black stock. Declared once, applied both by the OS
+   preference (so it works with JavaScript off) and by the manual override. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:           #121110;
+    --bg-lift:      #1C1A18;
+    --ink:          #EDEAE3;
+    --ink-soft:     #CBC6BC;
+    --ink-muted:    #928C81;
+    --line:         #2B2926;
+    --line-strong:  #454139;
+    --accent:       #62B8AA;
+    --select-bg:    #16403A;
+    --shadow-modal: rgba(0, 0, 0, .72);
+  }
+}
+[data-theme="dark"] {
+  --bg:           #121110;
+  --bg-lift:      #1C1A18;
+  --ink:          #EDEAE3;
+  --ink-soft:     #CBC6BC;
+  --ink-muted:    #928C81;
+  --line:         #2B2926;
+  --line-strong:  #454139;
+  --accent:       #62B8AA;
+  --select-bg:    #16403A;
+  --shadow-modal: rgba(0, 0, 0, .72);
+}
+
+/* ============================== base ============================== */
+
+* { box-sizing: border-box; }
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  scroll-padding-top: 0;          /* No top bar on desktop — anchors need no offset. */
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink-soft);
+  font-family: var(--serif);
+  font-size: 1.0625rem;
+  line-height: 1.62;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* A serif at 400 goes anaemic on dark; nudge the axis and stop thinning strokes. */
+[data-theme="dark"] body {
+  font-weight: 430;
+  -webkit-font-smoothing: auto;
+}
+
+::selection { background: var(--select-bg); color: var(--ink); }
+
+p { text-wrap: pretty; }
+
+a {
+  color: var(--ink);
+  text-decoration: none;
+  border-bottom: 1px solid var(--line-strong);
+  transition: border-color .15s ease;
+}
+a:hover,
+a:focus-visible { border-bottom: 2px solid var(--accent); }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 1px;
+}
+
+b, strong { font-weight: 600; color: var(--ink); }
+em { font-style: italic; }
+
+.mono {
+  font-family: var(--mono);
+  font-size: .88em;
+  font-variant-numeric: tabular-nums lining-nums;
+  letter-spacing: .005em;
+  color: var(--ink);
+}
+
+/* keep-all stops Korean breaking mid-word; overflow-wrap guards 320px. */
+.ko,
+.han { word-break: keep-all; overflow-wrap: break-word; }
+.ko { color: var(--ink-muted); font-size: .92em; }
+.han {
+  display: block;
+  margin-top: 3px;
+  font-size: .9375rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: var(--ink-muted);
+}
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  margin: -1px; padding: 0; overflow: hidden;
+  clip: rect(0 0 0 0); clip-path: inset(50%);
+  white-space: nowrap; border: 0;
+}
+
+.skip-link {
+  position: absolute; left: -9999px; top: 0; z-index: 200;
+  background: var(--bg); color: var(--ink);
+  border: 1px solid var(--ink);
+  padding: .625rem 1rem;
+  font-family: var(--mono); font-size: .75rem;
+  text-transform: uppercase; letter-spacing: .12em;
+}
+.skip-link:focus { left: 1rem; top: 1rem; }
+
+main:focus { outline: none; }
+
+/* ============================== page grid ============================== */
+
+.page {
+  display: grid;
+  grid-template-columns: var(--rail-w) minmax(0, var(--content-max));
+  column-gap: var(--gutter);
+  justify-content: start;
+  max-width: 102rem;
+  margin: 0 auto;
+  padding: 0 var(--page-pad);
+}
+
+.content { padding: var(--s7) 0 var(--s8); counter-reset: section; }
+
+/* Everything in the content column shares one sub-grid: a marginal gutter,
+   right-flush, against the text block. One hard vertical edge. */
+.grid-row,
+.entry,
+.skills,
+.section > h2,
+.topics li,
+.imprint {
+  display: grid;
+  grid-template-columns: var(--margin-col) minmax(0, 1fr);
+  column-gap: var(--margin-gap);
+  align-items: baseline;
+}
+
+/* The rules and separators span the full column — that is what makes the page
+   read wide — while the text stops at a fixed measure. */
+/* No marginal label precedes it, so without this the opening paragraph becomes
+   the row's first grid child and is squeezed into the marginal column. */
+.opening .lede { grid-column: 2; }
+
+.lede,
+.para,
+.standfirst-text,
+.entry-body,
+.topic-body,
+.skills dd { max-width: var(--measure); }
+
+.margin-label,
+.skills dt,
+.entry-meta {
+  text-align: right;
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums lining-nums;
+  color: var(--ink-muted);
+  margin: 0;
+}
+
+.margin-label,
+.skills dt {
+  font-size: .625rem;
+  font-weight: 500;
+  line-height: 1.7;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+/* ============================== rail ============================== */
+
+.rail {
+  position: sticky;
+  top: 0;
+  align-self: start;
+  height: 100dvh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;          /* it can overflow — do not hide the affordance */
+  display: flex;
+  flex-direction: column;
+  gap: var(--s5);
+  padding: var(--s6) 2.5rem var(--s5) 0;
+  border-right: 1px solid var(--line-strong);
+}
+
+/* Mounted plate — a paper margin between the frame and the image. */
+.plate { margin: 0; }
+.plate .mount {
+  display: inline-block;
+  padding: 5px;
+  border: 1px solid var(--line-strong);
+  background: var(--bg);
+}
+.mount-btn {
+  font: inherit; color: inherit;
+  cursor: zoom-in;
+  line-height: 0;
+}
+.plate img {
+  display: block;
+  width: 100px; height: 125px;
+  object-fit: cover;
+  border-radius: 0;
+  transition: opacity .15s ease;
+}
+.mount-btn:hover img { opacity: .88; }
+
+.masthead h1 {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 2.125rem;
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -.024em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+.role {
+  margin: .5rem 0 0;
+  font-family: var(--mono);
+  font-size: .6875rem;
+  line-height: 1.6;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.role + .role { margin-top: .125rem; }
+
+.rail-block { border-top: 1px solid var(--line); padding-top: var(--s4); }
+
+.rail-label {
+  margin: 0 0 var(--s3);
+  font-family: var(--mono);
+  font-size: .625rem;
+  font-weight: 500;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+/* Contact — colophon rows, not buttons. */
+.contact {
+  display: grid;
+  grid-template-columns: 3.5rem minmax(0, 1fr);
+  column-gap: 1rem;
+  row-gap: .5rem;
+  margin: 0;
+  align-items: baseline;
+}
+.contact dt {
+  font-family: var(--mono);
+  font-size: .625rem;
+  font-weight: 500;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+.contact dd {
+  margin: 0;
+  font-size: .9375rem;
+  line-height: 1.45;
+  word-break: break-word;
+}
+.linklike {
+  background: none; border: none; padding: 0;
+  font: inherit; color: var(--ink); cursor: pointer;
+  border-bottom: 1px solid var(--line-strong);
+  text-align: left;
+}
+.linklike:hover { border-bottom: 2px solid var(--accent); }
+
+/* ---- Table of contents: the active state is the leader filling in. ---- */
+
+.toc ol { list-style: none; margin: 0; padding: 0; }
+.toc li a {
+  display: grid;
+  grid-template-columns: 1.75rem auto minmax(1.5rem, 1fr);
+  align-items: center;
+  column-gap: 0;
+  min-height: 2.125rem;
+  border-bottom: none;
+}
+.toc li a:hover { border-bottom: none; }
+.toc li a:focus-visible { outline-offset: -2px; }   /* the rail clips an outset ring */
+.toc li a::before {
+  content: counter(list-item, decimal-leading-zero);
+  font-family: var(--mono);
+  font-size: .6875rem;
+  font-variant-numeric: tabular-nums lining-nums;
+  letter-spacing: .06em;
+  color: var(--ink-muted);
+  transition: color .3s ease;
+}
+.toc-label {
+  padding: 0 .75rem;
+  font-family: var(--mono);
+  font-size: .75rem;
+  font-weight: 400;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  white-space: nowrap;
+  transition: color .2s ease;
+}
+.leader {
+  height: 1px;
+  align-self: center;
+  background-image:
+    linear-gradient(var(--accent), var(--accent)),
+    radial-gradient(circle at 1px 50%, var(--line-strong) 0 1px, transparent 1.2px);
+  background-size: 0% 1px, 5px 1px;
+  background-repeat: no-repeat, repeat-x;
+  background-position: left center;
+  transition: background-size 320ms cubic-bezier(.32, .72, 0, 1);
+}
+.toc a:hover .toc-label { color: var(--ink-soft); }
+.toc a:hover .leader    { background-size: 24% 1px, 5px 1px; }
+.toc a[aria-current="true"] .toc-label { color: var(--ink); font-weight: 500; }
+.toc a[aria-current="true"] .leader    { background-size: 100% 1px, 5px 1px; }
+.toc a[aria-current="true"]::before    { color: var(--accent); }
+
+.colophon {
+  margin-top: auto;
+  border-top: 1px solid var(--line);
+  padding-top: var(--s4);
+}
+.colophon p {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: .625rem;
+  line-height: 1.9;
+  /* Tracking, not glyph width, is what overruns this line: at .625rem the old
+     .14em spent ~46px on the imprint's 33 characters, which the width axis
+     cannot claw back. .11em keeps it on one line at full width. */
+  letter-spacing: .11em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+.colophon-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .5rem;
+}
+.icon-btn {
+  flex: none;
+  background: none; border: none; padding: 0;
+  width: 22px; height: 22px;
+  display: inline-flex; align-items: center; justify-content: center;
+  color: var(--ink-muted); cursor: pointer;
+  transition: color .15s ease;
+}
+.icon-btn:hover { color: var(--ink); }
+.icon-moon { display: none; }
+[data-theme="dark"] .icon-sun { display: none; }
+[data-theme="dark"] .icon-moon { display: inline; }
+
+/* ============================== opening ============================== */
+
+.opening .grid-row + .grid-row { margin-top: var(--s5); }
+
+.lede {
+  margin: 0;
+  font-size: 1.25rem;
+  line-height: 1.5;
+  letter-spacing: -.005em;
+  color: var(--ink);
+}
+
+/* ============================== sections ============================== */
+
+.section {
+  counter-increment: section;
+  margin-top: var(--s8);
+  scroll-margin-top: var(--s5);
+}
+
+/* Scotch rule — thick over thin. Drawn with real borders so it survives print
+   with background graphics disabled, which is the browser default. */
+.section > h2 {
+  position: relative;
+  margin: 0 0 var(--s5);
+  padding-top: var(--s4);
+  border-top: 3px solid var(--ink);
+  font-family: var(--serif);
+  font-size: 1.875rem;
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: -.02em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+.section > h2::before {
+  content: counter(section, decimal-leading-zero);
+  font-family: var(--mono);
+  font-size: .75rem;
+  font-weight: 500;
+  line-height: 1;
+  font-variant-numeric: tabular-nums lining-nums;
+  letter-spacing: .1em;
+  text-align: right;
+  color: var(--ink-muted);
+  transition: color .3s ease;
+}
+.section > h2::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; top: 3px;
+  border-top: 1px solid var(--line-strong);
+}
+/* Two accent marks that always agree: the folio numeral and the TOC leader. */
+.section.is-current > h2::before { color: var(--accent); }
+
+/* Group heads are structure, not metadata. They were previously set in the mono
+   at metadata size and right-flushed into the marginal column — the same column,
+   alignment, family and colour as the dates. Readers scanning that column read
+   "Jan 2026 / Jan 2025 / TEACHING / Aug 2026" and take the group label for a
+   date out of sequence. Hence: the serif, full ink, and the text column. */
+.group-head {
+  margin: var(--s6) 0 var(--s4);
+  padding: var(--s4) 0 0 calc(var(--margin-col) + var(--margin-gap));
+  border-top: 2px solid var(--line-strong);
+  font-family: var(--serif);
+  /* Must outrank .entry-title (1.125rem) — it governs those entries. The first
+     pass set it at 1rem, which inverted the hierarchy: no amount of weight or
+     ink makes a heading read as a heading while it is smaller than its own
+     children. Uppercase, not sentence case, so it still reads as a
+     classification rather than as a second section title. */
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+/* The section's own scotch rule already closes the top, so the first group takes
+   no rule of its own. The rule then means one thing only: the group changed. */
+.section > .group-head:first-of-type {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+}
+
+.para { margin: 0 0 var(--s4); color: var(--ink-soft); }
+.para:last-child { margin-bottom: 0; }
+.para.small { font-size: 1rem; margin-top: var(--s2); }
+
+/* ---- standfirst ----
+   Was set entirely in italic, with roman inside it for emphasis — the classic
+   reversal. That worked with the previous serif. Alegreya's italic is
+   calligraphic by design, which is why it was chosen, but that personality is
+   for a word or a phrase: three lines of it turned the one sentence a reader
+   meets first into the noisiest thing on the page, and the roman emphasis
+   inside stopped registering. Set roman, at full ink. The size, the ink and
+   the CURRENTLY label still mark it apart from body text, and italic goes back
+   to doing what it is good at — short spans like <em>passive radar sensing</em>
+   in the paragraphs below. */
+.standfirst { margin-bottom: var(--s5); }
+.standfirst-text {
+  margin: 0;
+  font-size: 1.125rem;
+  line-height: 1.55;
+  color: var(--ink);
+}
+/* font-style and colour used to be overridden here to break out of the italic;
+   the parent is roman at full ink now, so only the weight is still doing work.
+   500 rather than the 600 used elsewhere — against roman at this size, 600 shouts. */
+.standfirst-text b { font-weight: 500; }
+
+/* ---- topics ---- */
+.topics { list-style: none; margin: var(--s5) 0 0; padding: 0; }
+.topics li { padding: var(--s3) 0; }
+.topics li + li { border-top: 1px solid var(--line); }
+.topic-tag {
+  text-align: right;
+  font-family: var(--mono);
+  font-size: .625rem;
+  font-weight: 500;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+.topic-body { color: var(--ink-soft); }
+
+/* ============================== entries ============================== */
+
+.entry { padding: var(--s5) 0; }
+.entry + .entry { border-top: 1px solid var(--line); }
+.group-head + .entry { padding-top: 0; }
+
+.entry-meta {
+  font-size: .75rem;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: .01em;
+  transition: color .14s ease;
+}
+.entry-meta > span { display: block; }
+.entry-meta .to::before { content: '– '; }
+.entry:hover .entry-meta { color: var(--ink); }
+
+/* The accent's only filled appearance anywhere on the page. */
+.is-present { color: var(--accent); }
+.is-present::after {
+  content: '';
+  display: inline-block;
+  width: 4px; height: 4px;
+  margin-left: .45em;
+  vertical-align: .08em;
+  background: var(--accent);
+}
+
+.entry-title {
+  margin: 0;
+  font-family: var(--serif);
+  font-size: 1.125rem;
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: -.008em;
+  color: var(--ink);
+}
+.entry-org {
+  margin: .25rem 0 0;
+  font-size: .9375rem;
+  line-height: 1.5;
+  color: var(--ink-muted);
+}
+.entry-org .sep { color: var(--ink-muted); margin: 0 .15em; }
+
+/* A hairline dash instead of a bullet — rules, not shapes. Border, not
+   background, so the marker survives printing. */
+.entry-notes { list-style: none; margin: var(--s3) 0 0; padding: 0; }
+.entry-notes li {
+  position: relative;
+  padding-left: 1.25rem;
+  margin-top: .35rem;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+.entry-notes li::before {
+  content: '';
+  position: absolute;
+  left: 0; top: .78em;
+  width: .5rem; height: 0;
+  border-top: 1px solid var(--line-strong);
+}
+
+.mono-tag,
+.rank {
+  display: block;
+  font-family: var(--mono);
+  font-size: .6875rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+.rank { margin-top: .5rem; color: var(--ink-soft); }
+
+/* ---- publications ---- */
+.cite-num { display: block; font-size: .75rem; }
+.plate-sm { display: block; margin-top: .75rem; border-bottom: none; }
+.plate-sm:hover { border-bottom: none; }
+.plate-sm .mount { display: block; width: 100%; padding: 4px; }
+.plate-sm img { width: 100%; height: auto; }   /* fills its track, never overflows */
+.entry-pub .entry-meta .mount { text-align: left; }
+
+.cite { margin: 0; color: var(--ink-soft); line-height: 1.55; max-width: var(--measure); }
+.cite strong { color: var(--ink); font-weight: 600; }
+.cite em { font-style: italic; }
+
+.pub-actions { margin: var(--s3) 0 0; }
+.pub-actions a {
+  font-family: var(--mono);
+  font-size: .6875rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+.pub-actions a:hover { color: var(--ink); }
+
+/* ---- skills ---- */
+.skills { margin: 0; row-gap: var(--s4); }
+.skills dt { line-height: 1.6; }
+.skills dd { margin: 0; color: var(--ink-soft); }
+
+/* ---- imprint: the offprint's closing colophon, and the scroll runway ---- */
+
+.imprint {
+  margin-top: var(--s8);
+  padding-top: var(--s4);
+  border-top: 3px solid var(--ink);
+  position: relative;
+}
+.imprint::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0; top: 3px;
+  border-top: 1px solid var(--line-strong);
+}
+.imprint p {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: .6875rem;
+  line-height: 1.9;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+/* ====================== running head (narrow only) ====================== */
+
+.runhead { display: none; }
+.runhead-panel { display: none; }
+
+/* ============================== modals, toast ============================== */
+
+.lightbox,
+.pdf-lightbox {
+  position: fixed; inset: 0; z-index: 100;
+  background: var(--shadow-modal);
+  display: flex; align-items: center; justify-content: center;
+  padding: 24px;
+}
+.lightbox[hidden],
+.pdf-lightbox[hidden] { display: none; }
+
+.lightbox-inner { position: relative; }
+.lightbox img {
+  display: block;
+  max-width: min(420px, 90vw);
+  max-height: 90vh;
+  border: 6px solid var(--bg);
+}
+.overlay-close {
+  position: absolute; top: -14px; right: -14px;
+  width: 32px; height: 32px;
+  background: var(--bg); color: var(--ink);
+  border: 1px solid var(--line-strong);
+  font-size: 20px; line-height: 1; cursor: pointer;
+}
+.overlay-close:hover { background: var(--bg-lift); }
+
+.pdf-lightbox-inner {
+  background: var(--bg);
+  width: min(900px, 95vw);
+  height: min(90vh, 1100px);
+  display: flex; flex-direction: column;
+  border: 1px solid var(--line-strong);
+  overflow: hidden;
+}
+.pdf-toolbar {
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 1rem;
+  padding: .625rem .875rem;
+  background: var(--bg-lift);
+  border-bottom: 1px solid var(--line-strong);
+  font-family: var(--mono); font-size: .6875rem;
+  letter-spacing: .12em; text-transform: uppercase;
+}
+.pdf-toolbar a { color: var(--ink); }
+#pdfClose {
+  background: none; border: none; cursor: pointer;
+  font-size: 20px; line-height: 1; color: var(--ink-muted);
+  width: 26px; height: 26px;
+}
+#pdfClose:hover { color: var(--ink); }
+#pdfFrame { flex: 1; width: 100%; border: 0; background: #fff; }
+
+.toast {
+  position: fixed; bottom: 24px; left: 50%;
+  transform: translateX(-50%) translateY(10px);
+  background: var(--ink); color: var(--bg);
+  padding: .625rem .875rem;
+  font-family: var(--mono); font-size: .6875rem;
+  letter-spacing: .06em;
+  opacity: 0; visibility: hidden; pointer-events: none;
+  transition: opacity .15s ease, transform .15s ease, visibility 0s linear .15s;
+  z-index: 150;
+}
+.toast.show {
+  opacity: 1; visibility: visible;
+  transform: translateX(-50%) translateY(0);
+  transition-delay: 0s;
+}
+
+/* =============================================================================
+   B — 40rem to 62rem: one column, but the marginal gutter survives.
+   The rail becomes a masthead; a running head carries wayfinding.
+   ============================================================================= */
+
+@media (max-width: 62rem) {
+  html { scroll-padding-top: 4rem; }
+
+  :root { --margin-col: 7rem; --margin-gap: 1.5rem; }
+
+  .page {
+    grid-template-columns: minmax(0, 1fr);
+    max-width: 46rem;
+    padding: 0 2rem;
+  }
+
+  /* Grid, not flex — a floated child of a flex container is ignored. */
+  .rail {
+    position: static;
+    height: auto;
+    overflow: visible;          /* must be reset, or it captures sticky children */
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: 1.5rem;
+    row-gap: var(--s5);
+    align-items: start;
+    padding: var(--s6) 0 var(--s5);
+    border-right: none;
+    border-bottom: 1px solid var(--line-strong);
+  }
+
+  .rail .plate { grid-column: 1; grid-row: 1; }
+  .rail .masthead { grid-column: 2; grid-row: 1; align-self: center; }
+  .rail .rail-block,
+  .rail .colophon { grid-column: 1 / -1; }
+  .rail .plate img { width: 96px; height: 120px; }
+
+  .contact { grid-template-columns: 3.25rem minmax(0, 1fr); row-gap: .375rem; }
+
+  /* The rail's contents list gives way to the running head — unless there is
+     no JavaScript, in which case it is the only wayfinding there is. */
+  .rail .toc { display: none; }
+  html:not(.js) .rail .toc { display: block; }
+  html:not(.js) .runhead { display: none; }
+
+  .colophon { margin-top: 0; }
+
+  .content { padding-top: var(--s6); }
+  .section { margin-top: var(--s7); }
+
+  .runhead {
+    position: sticky; top: 0; z-index: 40;
+    display: flex; align-items: stretch; justify-content: space-between;
+    height: 44px;
+    background: var(--bg);            /* solid — never a backdrop filter */
+    border-bottom: 1px solid var(--line);
+    /* Track the centred page rather than the viewport edges. */
+    padding-left: max(2rem, calc((100% - 46rem) / 2 + 2rem));
+    padding-right: max(2rem, calc((100% - 46rem) / 2 + 2rem));
+  }
+  .runhead-current {
+    display: flex; align-items: center; gap: .625rem;
+    background: none; border: none; padding: 0;
+    font-family: var(--mono); font-size: .6875rem;
+    letter-spacing: .14em; text-transform: uppercase;
+    color: var(--ink); cursor: pointer;
+  }
+  .runhead-num { color: var(--accent); font-variant-numeric: tabular-nums lining-nums; }
+  .runhead-caret {
+    width: 7px; height: 7px;
+    border-right: 1px solid var(--ink-muted);
+    border-bottom: 1px solid var(--ink-muted);
+    transform: translateY(-2px) rotate(45deg);
+    transition: transform .2s ease;
+  }
+  .runhead-current[aria-expanded="true"] .runhead-caret {
+    transform: translateY(1px) rotate(225deg);
+  }
+  .runhead-top {
+    display: flex; align-items: center;
+    font-family: var(--mono); font-size: .6875rem;
+    letter-spacing: .14em; text-transform: uppercase;
+    color: var(--ink-muted); border-bottom: none;
+  }
+  .runhead-top:hover { color: var(--ink); border-bottom: none; }
+
+  .runhead-panel {
+    display: block;
+    position: sticky; top: 44px; z-index: 39;
+    background: var(--bg-lift);
+    border-bottom: 1px solid var(--line-strong);
+    padding: var(--s3) max(2rem, calc((100% - 46rem) / 2 + 2rem)) var(--s4);
+    max-height: calc(100dvh - 44px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+  .runhead-panel[hidden] { display: none; }
+}
+
+/* =============================================================================
+   C — below 40rem: the gutter collapses.
+   ============================================================================= */
+
+@media (max-width: 40rem) {
+  body { font-size: 1rem; }
+
+  .page { padding: 0 1.25rem; }
+  .runhead {
+    padding-left: max(1.25rem, calc((100% - 46rem) / 2 + 1.25rem));
+    padding-right: max(1.25rem, calc((100% - 46rem) / 2 + 1.25rem));
+  }
+  .runhead-panel { padding-left: 1.25rem; padding-right: 1.25rem; }
+
+  .grid-row,
+  .entry,
+  .skills,
+  .section > h2,
+  .topics li,
+  .imprint {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: .5rem;
+  }
+
+  .margin-label,
+  .skills dt,
+  .entry-meta,
+  .topic-tag,
+  .section > h2::before { text-align: left; }
+
+  /* No marginal column to clear once the grid collapses. */
+  .group-head { padding-left: 0; }
+  .opening .lede { grid-column: auto; }
+
+  .section > h2 { font-size: 1.5rem; }
+  .section > h2::before { margin-bottom: .5rem; }
+
+  .masthead h1 { font-size: 1.75rem; }
+  .lede { font-size: 1.125rem; }
+
+  /* Dates go inline once they are no longer in a fixed-width column. */
+  .entry-meta > span { display: inline; }
+  .entry-meta .to::before { content: ' – '; }
+  .mono-tag { display: inline; margin-right: .75rem; }
+  .rank { display: inline; margin-top: 0; }
+
+  .entry-pub .entry-meta { display: flex; align-items: flex-start; gap: 1rem; }
+  .plate-sm { margin-top: 0; width: 110px; flex: none; }
+
+  .rail { grid-template-columns: minmax(0, 1fr); row-gap: var(--s4); }
+  .rail .plate,
+  .rail .masthead { grid-column: 1; grid-row: auto; }
+}
+
+/* Short viewports: compact the rail so the colophon is never clipped. The
+   band this has to cover is wide — a 1366x768 laptop needs it as much as a
+   1280x700 one does. */
+@media (min-width: 62.01rem) and (max-height: 62rem) {
+  .rail { gap: var(--s4); padding-top: var(--s5); padding-bottom: var(--s4); }
+  .rail .plate img { width: 84px; height: 105px; }
+  .masthead h1 { font-size: 1.75rem; }
+  .rail-block { padding-top: var(--s3); }
+  .rail-label { margin-bottom: var(--s2); }
+  .toc li a { min-height: 1.75rem; }
+  .colophon { padding-top: var(--s3); }
+  .colophon p { line-height: 1.7; }
+}
+
+/* Second tier for genuinely short laptops (768px of chrome-reduced viewport is
+   ~48rem). Without this the colophon — and with it the only theme control —
+   still falls below the fold. */
+@media (min-width: 62.01rem) and (max-height: 48rem) {
+  .rail { gap: var(--s3); padding-top: var(--s4); }
+  .rail .plate img { width: 72px; height: 90px; }
+  .masthead h1 { font-size: 1.5rem; }
+  .role { margin-top: .3rem; line-height: 1.45; }
+  .rail-block { padding-top: var(--s2); }
+  .contact { row-gap: .3rem; }
+  .toc li a { min-height: 1.55rem; }
+  .colophon p { line-height: 1.5; }
+}
+
+/* Third tier — a desktop window under ~640px of viewport. Past this the rail
+   cannot hold everything at a sane size, so the contents label goes and the
+   plate shrinks to a stamp rather than letting the colophon fall off. */
+@media (min-width: 62.01rem) and (max-height: 40rem) {
+  .rail { gap: var(--s2); padding-top: var(--s3); }
+  .rail .plate img { width: 56px; height: 70px; }
+  .masthead h1 { font-size: 1.3125rem; }
+  .rail-label { display: none; }
+  .toc li a { min-height: 1.4rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+  }
+}
+
+/* =============================================================================
+   D — print. This doubles as the printable CV, so it must stay excellent.
+   Everything load-bearing is a border, never a background: browsers print with
+   background graphics OFF by default.
+   ============================================================================= */
+
+@media print {
+  :root {
+    --bg: #fff;
+    --bg-lift: #fff;
+    --ink: #000;
+    --ink-soft: #1a1a1a;
+    --ink-muted: #555;
+    --line: #ccc;
+    --line-strong: #999;
+    --accent: #000;
+    /* One gutter for every row type, so the page keeps a single hard edge. */
+    --margin-col: 22mm;
+    --margin-gap: 6mm;
+    --measure: 118mm;
+  }
+
+  @page { size: A4; margin: 16mm 15mm; }
+
+  html, body {
+    background: #fff !important;
+    color: #000 !important;
+    font-size: 9.5pt;
+    line-height: 1.45;
+  }
+
+  .skip-link,
+  .runhead, .runhead-panel,
+  .toc,
+  .icon-btn,
+  .lightbox, .pdf-lightbox, .toast,
+  .pub-actions,
+  .plate-sm,
+  .leader,
+  .imprint,
+  .is-present::after { display: none !important; }
+
+  .page { display: block; max-width: 100%; padding: 0; }
+
+  /* NOTE: an A4 page at 15mm margins is ~680px wide, so the (max-width: 62rem)
+     block above is ALSO live here. These must match its specificity to win. */
+  .rail {
+    position: static;
+    height: auto;
+    overflow: visible;
+    display: grid;
+    grid-template-columns: 1fr 26mm;
+    align-items: start;
+    column-gap: 6mm;
+    row-gap: 2mm;
+    padding: 0 0 6pt;
+    margin-bottom: 12pt;
+    border-right: none;
+    border-bottom: 1.5pt solid #000;
+  }
+  .rail .plate { grid-column: 2; grid-row: 1 / span 3; margin: 0; align-self: start; }
+  .rail .masthead { grid-column: 1; grid-row: 1; align-self: start; }
+  .rail .rail-block { grid-column: 1; grid-row: 2; }
+  .rail .colophon { grid-column: 1; grid-row: 3; }
+  .plate .mount {
+    display: block; width: 100%;
+    padding: 2pt; border: 0.5pt solid #999;
+  }
+  .plate img {
+    width: 100%; height: 30mm;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  .masthead h1 { font-size: 17pt; }
+  .han { display: inline; margin-left: .4em; font-size: 11pt; }
+  .role { font-size: 7.5pt; margin-top: 2pt; }
+
+  .rail-block { border-top: none; padding-top: 4pt; }
+  .contact { display: block; font-size: 8pt; }
+  .contact dt { display: none; }
+  .contact dd { display: inline; margin-right: 4mm; }
+  .contact a[href^="http"]::after { content: ' (' attr(href) ')'; font-size: 7pt; }
+  .linklike { display: none; }
+
+  .colophon { margin-top: 0; border-top: none; padding-top: 2pt; }
+  .colophon p { font-size: 7pt; line-height: 1.5; }
+
+  /* JS sets an inline padding-bottom runway for the scrollspy; kill it here. */
+  .content { padding: 0 !important; }
+
+  .opening .grid-row + .grid-row { margin-top: 6pt; }
+  .lede { font-size: 10.5pt; line-height: 1.45; }
+
+  .section { margin-top: 14pt; }
+  .section > h2 {
+    font-size: 13pt;
+    padding-top: 5pt;
+    margin-bottom: 8pt;
+    border-top: 2pt solid #000;
+    break-inside: avoid;  page-break-inside: avoid;
+    break-after: avoid;   page-break-after: avoid;
+  }
+  .section > h2::after { top: 2pt; border-top: 0.4pt solid #999; }
+  .section > h2::before { font-size: 7.5pt; }
+  /* Scroll position must not decide what the paper looks like. */
+  .section.is-current > h2::before { color: var(--ink-muted) !important; }
+
+  .group-head {
+    margin: 9pt 0 4pt;
+    padding-top: 4pt;
+    /* Same rule as on screen: above .entry-title (10.5pt), below h2 (13pt). */
+    font-size: 11.5pt;
+    letter-spacing: .06em;
+    border-top: 0.75pt solid #999;
+    break-inside: avoid; break-after: avoid; page-break-after: avoid;
+  }
+  .section > .group-head:first-of-type { padding-top: 0; border-top: 0; }
+
+  .entry { padding: 6pt 0; }
+  .entry-meta { font-size: 8pt; }
+  .entry-title { font-size: 10.5pt; }
+  .entry-org { font-size: 8.5pt; }
+  .entry-notes li { font-size: 9pt; margin-top: 2pt; }
+  .para.small { font-size: 9pt; }
+  .standfirst-text { font-size: 10pt; }
+
+  /* Never break-inside:avoid a whole section — it is taller than a page and
+     the browser ejects a blank sheet. Rows only. */
+  .entry, .topics li, .skills dt, .skills dd, .grid-row { break-inside: avoid; }
+  .section { break-inside: auto; }
+
+  a { color: #000 !important; border-bottom: none !important; }
+}
